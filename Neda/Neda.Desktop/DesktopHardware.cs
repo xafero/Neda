@@ -4,12 +4,14 @@ namespace Neda.Desktop
 {
 	public class DesktopHardware : IHardware, IPower
 	{
-		public DesktopHardware()
+		public DesktopHardware(IConsole con)
 		{
 			Power = this;
+			Console = con;
 		}
 
 		public IPower Power { get; }
+		public IConsole Console { get; }
 
 		public void Shutdown()
 		{

@@ -3,5 +3,7 @@
 	public interface IHardware
 	{
 		IPower Power { get; }
+
+		IConsole Console { get; }
 	}
 }

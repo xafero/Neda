@@ -1,5 +1,4 @@
-﻿using System;
-using Neda.API;
+﻿using Neda.API;
 
 namespace Neda.Core
 {
@@ -16,7 +15,7 @@ namespace Neda.Core
 
 		public void BeforeRun()
 		{
-			Console.WriteLine("Booted successfully.");
+			_hw.Console.WriteLine("Booted successfully.");
 		}
 
 		public void Run()
@@ -24,14 +23,14 @@ namespace Neda.Core
 			if (_firstRun)
 			{
 				_firstRun = false;
-				Console.Clear();
+				_hw.Console.Clear();
 				return;
 			}
 
-			Console.Write("Input: ? ");
-			var input = Console.ReadLine();
-			Console.Write("Text typed: ");
-			Console.WriteLine(input);
+			_hw.Console.Write("Input: ? ");
+			var input = _hw.Console.ReadLine();
+			_hw.Console.Write("Text typed: ");
+			_hw.Console.WriteLine(input);
 
 			if (input == "shutdown")
 			{
@@ -41,6 +40,11 @@ namespace Neda.Core
 			{
 				_hw.Power.Reboot();
 			}
+		}
+
+		public void AfterRun()
+		{
+			_hw.Console.WriteLine("Kernel stopped.");
 		}
 	}
 }

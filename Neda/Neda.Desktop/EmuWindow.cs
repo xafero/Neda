@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using Cairo;
 using Gtk;
+using Neda.API;
 using Context = Cairo.Context;
 
 namespace Neda.Desktop
 {
-	internal class EmuWindow : DrawingArea
+	internal class EmuWindow : DrawingArea, IConsole
 	{
 		private readonly int _cols;
 		private readonly int _rows;

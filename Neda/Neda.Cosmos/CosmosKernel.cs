@@ -24,5 +24,10 @@ namespace Neda.Cosmos
 		{
 			_main.Run();
 		}
+
+		protected override void AfterRun()
+		{
+			_main.AfterRun();
+		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Gdk;
 using Gtk;
 using Window = Gtk.Window;
@@ -15,6 +16,7 @@ namespace Neda.Desktop
 			Application.Init();
 
 			var gtk = new EmuWindow();
+			gtk.Shown += OnEmuStart;
 
 			var frame = new Window("Neda Desktop");
 			frame.DeleteEvent += DoQuit;
@@ -46,6 +48,18 @@ namespace Neda.Desktop
 		{
 			Application.Quit();
 			Environment.Exit(0);
+		}
+
+		private static void OnEmuStart(object sender, EventArgs e)
+		{
+			var gtk = (EmuWindow)sender;
+			gtk.Shown -= OnEmuStart;
+			ThreadPool.QueueUserWorkItem(kernel =>
+			{
+				kernel.BeforeRun();
+				kernel.Run();
+				kernel.AfterRun();
+			}, new DesktopKernel(gtk), false);
 		}
 	}
 }
