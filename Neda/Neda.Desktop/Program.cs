@@ -7,8 +7,8 @@ namespace Neda.Desktop
 {
 	internal static class Program
 	{
-		private static readonly int width = 640;
-		private static readonly int height = 480;
+		internal static readonly int Width = 645;
+		internal static readonly int Height = 280;
 
 		private static void Main(string[] _)
 		{
@@ -17,21 +17,35 @@ namespace Neda.Desktop
 			var gtk = new EmuWindow();
 
 			var frame = new Window("Neda Desktop");
-			frame.DeleteEvent += delegate
-			{
-				Application.Quit();
-				Environment.Exit(0);
-			};
-			frame.SetDefaultSize((int)(width * 1.5), (int)(height * 1.5));
+			frame.DeleteEvent += DoQuit;
+			frame.SetDefaultSize((int)(Width * 1.5), (int)(Height * 1.5));
 			frame.SetPosition(WindowPosition.Center);
+
+			var mb = new MenuBar();
+			var fileMenu = new Menu();
+			var file = new MenuItem("File") { Submenu = fileMenu };
+			var exit = new MenuItem("Exit");
+			exit.Activated += DoQuit;
+			fileMenu.Append(exit);
+			mb.Append(file);
+
+			var box = new VBox(false, 2);
+			box.PackStart(mb, false, false, 0);
+			box.Add(gtk);
 
 			var icon = Resources.FindResource("/icons/app.png");
 			frame.Icon = new Pixbuf(icon);
 
-			frame.Add(gtk);
+			frame.Add(box);
 			frame.ShowAll();
 
 			Application.Run();
+		}
+
+		private static void DoQuit<T>(object o, T args) where T : EventArgs
+		{
+			Application.Quit();
+			Environment.Exit(0);
 		}
 	}
 }
