@@ -21,6 +21,26 @@ namespace Neda.Desktop
 			_screen = new char[_cols * _rows];
 		}
 
+		public void Clear()
+		{
+			for (var i = 0; i < _screen.Length; i++)
+				_screen[i] = default;
+			Refresh(this);
+		}
+
+		public void Write(string text)
+		{
+			for (var i = 0; i < text.Length; i++)
+				_screen[i] = text[i];
+			Refresh(this);
+		}
+
+		public void WriteLine(string text)
+			=> Write(text + Environment.NewLine);
+
+		private static void Refresh(Widget widget)
+			=> Application.Invoke((o, e) => widget.QueueDraw());
+
 		protected override bool OnDrawn(Context g)
 		{
 			var width = AllocatedWidth;
