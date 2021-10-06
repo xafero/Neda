@@ -17,6 +17,7 @@ namespace Neda.Desktop
 
 			var gtk = new EmuWindow();
 			gtk.Shown += OnEmuStart;
+			gtk.CanFocus = true;
 
 			var frame = new Window("Neda Desktop");
 			frame.DeleteEvent += DoQuit;
@@ -54,6 +55,7 @@ namespace Neda.Desktop
 		{
 			var gtk = (EmuWindow)sender;
 			gtk.Shown -= OnEmuStart;
+			gtk.GrabFocus();
 			ThreadPool.QueueUserWorkItem(kernel =>
 			{
 				kernel.BeforeRun();
