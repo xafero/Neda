@@ -37,7 +37,19 @@ namespace Neda.Desktop
         public void Write(string text)
         {
             for (var i = 0; i < text.Length; i++)
-                _screen[i] = text[i];
+            {
+                var letter = text[i];
+                if (letter == '\r')
+                    continue;
+                if (letter == '\n')
+                {
+                    InsertNewLine();
+                    continue;
+                }
+                var index = (_currentRow * _cols) + _currentCol;
+                _screen[index] = letter;
+                _currentCol++;
+            }
             Refresh(this);
         }
 
