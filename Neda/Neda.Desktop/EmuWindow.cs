@@ -26,8 +26,13 @@ namespace Neda.Desktop
         {
             for (var i = 0; i < _screen.Length; i++)
                 _screen[i] = default;
+            _currentRow = 0;
+            _currentCol = 0;
             Refresh(this);
         }
+
+        private int _currentRow = 0;
+        private int _currentCol = 0;
 
         public void Write(string text)
         {
