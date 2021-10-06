@@ -122,12 +122,19 @@ namespace Neda.Desktop
             return base.OnKeyPressEvent(e);
         }
 
+        private void InsertNewLine()
+        {
+            _currentRow++;
+            _currentCol = 0;
+        }
+
         public string ReadLine()
         {
             _nextLineEvent.WaitOne();
             _nextLineEvent.Reset();
             var line = _currentLine.ToString();
             _currentLine.Clear();
+            InsertNewLine();
             return line;
         }
     }
