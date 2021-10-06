@@ -11,6 +11,7 @@ namespace Neda.Desktop
 {
     internal class EmuWindow : DrawingArea, IConsole
     {
+        private readonly Timer _cursorTimer;
         private readonly int _cols;
         private readonly int _rows;
         private char[] _screen;
@@ -20,6 +21,19 @@ namespace Neda.Desktop
             _cols = 80;
             _rows = 25;
             _screen = new char[_cols * _rows];
+
+            var duration = 250;
+            _cursorTimer = new Timer(OnCursorTimer, this, duration, duration);
+        }
+
+        private void OnCursorTimer(object state)
+        {
+            var index = (_currentRow * _cols) + _currentCol;
+            if (_screen[index] == '_')
+                _screen[index] = ' ';
+            else
+                _screen[index] = '_';
+            Refresh((Widget)state);
         }
 
         public void Clear()
