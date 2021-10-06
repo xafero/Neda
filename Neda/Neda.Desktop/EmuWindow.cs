@@ -12,15 +12,15 @@ namespace Neda.Desktop
     internal class EmuWindow : DrawingArea, IConsole
     {
         private readonly Timer _cursorTimer;
-        private readonly int _cols;
-        private readonly int _rows;
+        private readonly Size _size;
+        private Cursor _cursor;
         private char[] _screen;
 
         public EmuWindow()
         {
-            _cols = 80;
-            _rows = 25;
-            _screen = new char[_cols * _rows];
+            _size = new Size { Cols = 80, Rows = 25 };
+            _cursor = new Cursor { Row = 0, Col = 0 };
+            _screen = new char[_size.Cols * _size.Rows];
 
             var duration = 250;
             _cursorTimer = new Timer(OnCursorTimer, this, duration, duration);
@@ -28,7 +28,7 @@ namespace Neda.Desktop
 
         private void OnCursorTimer(object state)
         {
-            var index = (_currentRow * _cols) + _currentCol;
+            var index = (_cursor.Row * _size.Cols) + _cursor.Col;
             if (_screen[index] == '_')
                 _screen[index] = ' ';
             else
@@ -40,13 +40,10 @@ namespace Neda.Desktop
         {
             for (var i = 0; i < _screen.Length; i++)
                 _screen[i] = default;
-            _currentRow = 0;
-            _currentCol = 0;
+            _cursor.Row = 0;
+            _cursor.Col = 0;
             Refresh(this);
         }
-
-        private int _currentRow = 0;
-        private int _currentCol = 0;
 
         public void Write(string text)
         {
@@ -60,10 +57,10 @@ namespace Neda.Desktop
                     InsertNewLine();
                     continue;
                 }
-                var index = (_currentRow * _cols) + _currentCol;
+                var index = (_cursor.Row * _size.Cols) + _cursor.Col;
                 _screen[index] = letter;
-                _currentCol++;
-                if (_currentCol >= _cols)
+                _cursor.Col++;
+                if (_cursor.Col >= _size.Cols)
                     InsertNewLine();
             }
             Refresh(this);
@@ -97,12 +94,12 @@ namespace Neda.Desktop
             g.SelectFontFace("Courier New", FontSlant.Normal, FontWeight.Bold);
             g.SetFontSize(13);
 
-            for (var y = 0; y < _rows; y++)
+            for (var y = 0; y < _size.Rows; y++)
             {
                 var bld = new StringBuilder();
-                for (var x = 0; x < _cols; x++)
+                for (var x = 0; x < _size.Cols; x++)
                 {
-                    var arrayIndex = y * _cols + x;
+                    var arrayIndex = y * _size.Cols + x;
                     var letter = _screen[arrayIndex];
                     bld.Append(letter);
                 }
@@ -119,16 +116,28 @@ namespace Neda.Desktop
 
         protected override bool OnKeyPressEvent(EventKey e)
         {
-            var letter = (char)Gdk.Keyval.ToUnicode(e.KeyValue);
-            if (letter == default)
+            if (e.Key == Gdk.Key.Return || e.Key == Gdk.Key.KP_Enter)
             {
-                Console.Error.WriteLine("Special key ?! " + e.Key);
+                _nextLineEvent.Set();
+            }
+            else if (e.Key == Gdk.Key.BackSpace)
+            {
+                //
+            }
+            else if (e.Key == Gdk.Key.Left)
+            {
+                // 
+            }
+            else if (e.Key == Gdk.Key.Right)
+            {
+                //
             }
             else
             {
-                if (e.Key == Gdk.Key.Return || e.Key == Gdk.Key.KP_Enter)
+                var letter = (char)Gdk.Keyval.ToUnicode(e.KeyValue);
+                if (letter == default)
                 {
-                    _nextLineEvent.Set();
+                    Console.Error.WriteLine("Special key ?! " + e.Key);
                 }
                 else
                 {
@@ -140,13 +149,13 @@ namespace Neda.Desktop
 
         private void InsertNewLine()
         {
-            _currentRow++;
-            _currentCol = 0;
-            if (_currentRow >= _rows)
+            _cursor.Row++;
+            _cursor.Col = 0;
+            if (_cursor.Row >= _size.Rows)
             {
-                _currentRow = _rows - 1;
+                _cursor.Row = _size.Rows - 1;
                 var newScreen = new char[_screen.Length];
-                var start = 1 * _cols;
+                var start = 1 * _size.Cols;
                 Array.Copy(_screen, start, newScreen, 0, _screen.Length - start);
                 _screen = newScreen;
             }
