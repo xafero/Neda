@@ -49,6 +49,8 @@ namespace Neda.Desktop
                 var index = (_currentRow * _cols) + _currentCol;
                 _screen[index] = letter;
                 _currentCol++;
+                if (_currentCol >= _cols)
+                    InsertNewLine();
             }
             Refresh(this);
         }
