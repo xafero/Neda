@@ -13,7 +13,7 @@ namespace Neda.Desktop
     {
         private readonly int _cols;
         private readonly int _rows;
-        private readonly char[] _screen;
+        private char[] _screen;
 
         public EmuWindow()
         {
@@ -128,6 +128,14 @@ namespace Neda.Desktop
         {
             _currentRow++;
             _currentCol = 0;
+            if (_currentRow >= _rows)
+            {
+                _currentRow = _rows - 1;
+                var newScreen = new char[_screen.Length];
+                var start = 1 * _cols;
+                Array.Copy(_screen, start, newScreen, 0, _screen.Length - start);
+                _screen = newScreen;
+            }
         }
 
         public string ReadLine()
