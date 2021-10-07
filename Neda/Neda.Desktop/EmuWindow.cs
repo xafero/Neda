@@ -133,8 +133,8 @@ namespace Neda.Desktop
 			return false;
 		}
 
-		private readonly StringBuilder _currentLine = new StringBuilder();
-		private readonly ManualResetEvent _nextLineEvent = new ManualResetEvent(false);
+		private readonly StringBuilder _currentLine = new();
+		private readonly ManualResetEvent _nextLineEvent = new(false);
 
 		protected override bool OnKeyPressEvent(EventKey e)
 		{
@@ -144,15 +144,18 @@ namespace Neda.Desktop
 			}
 			else if (e.Key == Gdk.Key.BackSpace)
 			{
-				//
+				if (_cursor.Col >= 1)
+					_cursor.Col--;
 			}
 			else if (e.Key == Gdk.Key.Left)
 			{
-				// 
+				if (_cursor.Col >= 1)
+					_cursor.Col--;
 			}
 			else if (e.Key == Gdk.Key.Right)
 			{
-				//
+				if (_cursor.Col < (_size.Cols - 1))
+					_cursor.Col++;
 			}
 			else
 			{
