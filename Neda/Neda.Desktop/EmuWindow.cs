@@ -59,6 +59,12 @@ namespace Neda.Desktop
 			Refresh(this);
 		}
 
+		private void SetChar(int row, int col, char letter)
+		{
+			var index = (row * _size.Cols) + col;
+			_screen[index] = letter;
+		}
+
 		public void Write(string text)
 		{
 			for (var i = 0; i < text.Length; i++)
@@ -71,8 +77,7 @@ namespace Neda.Desktop
 					InsertNewLine();
 					continue;
 				}
-				var index = (_cursor.Row * _size.Cols) + _cursor.Col;
-				_screen[index] = letter;
+				SetChar(_cursor.Row, _cursor.Col, letter);
 				_cursor.Col++;
 				if (_cursor.Col >= _size.Cols)
 					InsertNewLine();
@@ -144,8 +149,12 @@ namespace Neda.Desktop
 			}
 			else if (e.Key == Gdk.Key.BackSpace)
 			{
-				if (_cursor.Col >= 1)
+				if (_cursor.Col >= 1 && _currentLine.Length >= 1)
+				{
 					_cursor.Col--;
+					SetChar(_cursor.Row, _cursor.Col, default);
+					_currentLine.Remove(_currentLine.Length - 1, 1);
+				}
 			}
 			else if (e.Key == Gdk.Key.Left)
 			{
@@ -167,6 +176,7 @@ namespace Neda.Desktop
 				else
 				{
 					_currentLine.Append(letter);
+					Write(letter.ToString());
 				}
 			}
 			return base.OnKeyPressEvent(e);
