@@ -61,9 +61,11 @@ namespace Neda.Desktop
 			Refresh(this);
 		}
 
+		private int GetIndex(int row, int col) => (row * _size.Cols) + col;
+
 		private void SetChar(int row, int col, char letter)
 		{
-			var index = (row * _size.Cols) + col;
+			var index = GetIndex(row, col);
 			_screen[index] = letter;
 		}
 
@@ -153,9 +155,11 @@ namespace Neda.Desktop
 			{
 				if (_cursor.Col >= 1 && _currentLine.Length >= 1)
 				{
+					var pos = _cursor.Col - _editAnchor.Col - 1;
+					_currentLine.Remove(pos, 1);
 					_cursor.Col--;
 					SetChar(_cursor.Row, _cursor.Col, default);
-					_currentLine.Remove(_currentLine.Length - 1, 1);
+					ShiftChars(_cursor.Row, _cursor.Col);
 				}
 			}
 			else if (e.Key == Gdk.Key.Left)
@@ -182,6 +186,16 @@ namespace Neda.Desktop
 				}
 			}
 			return base.OnKeyPressEvent(e);
+		}
+
+		private void ShiftChars(int row, int col)
+		{
+			var start = GetIndex(row, col);
+			var end = _screen.Skip(start + 1)
+				.Select((c, i) => (c, i: start + i))
+				.First(t => t.c == default).i;
+			for (var i = start; i <= end; i++)
+				_screen[i] = _screen[i + 1];
 		}
 
 		private void InsertNewLine()
