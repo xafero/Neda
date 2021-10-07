@@ -18,6 +18,7 @@ namespace Neda.Desktop
 		private readonly IList<(int r, int c, char s)> _layer;
 		private Cursor _cursor;
 		private char[] _screen;
+		private Cursor _editAnchor;
 
 		public EmuWindow()
 		{
@@ -56,6 +57,7 @@ namespace Neda.Desktop
 				_screen[i] = default;
 			_cursor.Row = 0;
 			_cursor.Col = 0;
+			_editAnchor = default;
 			Refresh(this);
 		}
 
@@ -158,12 +160,12 @@ namespace Neda.Desktop
 			}
 			else if (e.Key == Gdk.Key.Left)
 			{
-				if (_cursor.Col >= 1)
+				if (_cursor.Col >= 1 && _cursor.Col > _editAnchor.Col)
 					_cursor.Col--;
 			}
 			else if (e.Key == Gdk.Key.Right)
 			{
-				if (_cursor.Col < (_size.Cols - 1))
+				if (_cursor.Col < (_size.Cols - 1) && _cursor.Col < (_editAnchor.Col + _currentLine.Length))
 					_cursor.Col++;
 			}
 			else
@@ -198,6 +200,7 @@ namespace Neda.Desktop
 
 		public string ReadLine()
 		{
+			_editAnchor = _cursor;
 			_nextLineEvent.WaitOne();
 			_nextLineEvent.Reset();
 			var line = _currentLine.ToString();
