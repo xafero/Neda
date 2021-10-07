@@ -159,7 +159,7 @@ namespace Neda.Desktop
 			}
 			else
 			{
-				var letter = (char)Gdk.Keyval.ToUnicode(e.KeyValue);
+				var letter = (char)Keyval.ToUnicode(e.KeyValue);
 				if (letter == default)
 				{
 					Console.Error.WriteLine("Special key ?! " + e.Key);
