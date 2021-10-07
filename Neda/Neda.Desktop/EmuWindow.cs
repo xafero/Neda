@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Cairo;
@@ -13,6 +15,7 @@ namespace Neda.Desktop
 	{
 		private readonly Timer _cursorTimer;
 		private readonly Size _size;
+		private readonly IList<(int r, int c, char s)> _layer;
 		private Cursor _cursor;
 		private char[] _screen;
 
@@ -21,18 +24,29 @@ namespace Neda.Desktop
 			_size = new Size { Cols = 80, Rows = 25 };
 			_cursor = new Cursor { Row = 0, Col = 0 };
 			_screen = new char[_size.Cols * _size.Rows];
+			_layer = new List<(int r, int c, char s)>();
 
-			var duration = 250;
+			const int duration = 250;
 			_cursorTimer = new Timer(OnCursorTimer, this, duration, duration);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			_cursorTimer.Dispose();
 		}
 
 		private void OnCursorTimer(object state)
 		{
-			var index = (_cursor.Row * _size.Cols) + _cursor.Col;
-			if (_screen[index] == '_')
-				_screen[index] = ' ';
+			const char cSign = '_';
+			const char lSign = ' ';
+			char letter;
+			if (_layer.FirstOrDefault().s == cSign)
+				letter = lSign;
 			else
-				_screen[index] = '_';
+				letter = cSign;
+			_layer.Clear();
+			_layer.Add((r: _cursor.Row, c: _cursor.Col, s: letter));
 			Refresh((Widget)state);
 		}
 
@@ -106,6 +120,14 @@ namespace Neda.Desktop
 				g.SetSourceRGB(255, 255, 255);
 				g.MoveTo(xShift, yShift + (ySize * y));
 				g.ShowText(bld.ToString());
+			}
+
+			foreach (var (r, c, s) in _layer)
+			{
+				g.SetSourceRGB(255, 255, 255);
+				g.MoveTo(xShift, yShift + (ySize * r));
+				var spaces = string.Join(string.Empty, Enumerable.Repeat(' ', c));
+				g.ShowText(spaces + s);
 			}
 
 			return false;
