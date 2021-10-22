@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Neda.API\Neda.API.csproj" />
-    <ProjectReference Include="..\Neda.Base\Neda.Base.csproj" />
   </ItemGroup>
 
 </Project>

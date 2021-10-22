@@ -2,6 +2,7 @@
 using System.Threading;
 using Gdk;
 using Gtk;
+using Neda.Desktop.Core;
 using Window = Gtk.Window;
 
 namespace Neda.Desktop

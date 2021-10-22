@@ -2,7 +2,7 @@
 {
 	public interface IConsole
 	{
-		void WriteLine(string text);
+		void WriteLine(string text = null);
 
 		void Clear();
 

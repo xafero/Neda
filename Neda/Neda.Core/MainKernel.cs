@@ -1,45 +1,33 @@
 ﻿using Neda.API;
+using Neda.Base;
 
 namespace Neda.Core
 {
 	public class MainKernel
 	{
 		private readonly IHardware _hw;
-		private bool _firstRun;
 
 		public MainKernel(IHardware hw)
 		{
 			_hw = hw;
-			_firstRun = true;
 		}
 
 		public void BeforeRun()
 		{
+			_hw.Console.WriteLine($"Starting {Constants.OsName}...");
+			_hw.Console.WriteLine();
+			_hw.Console.WriteLine();
 			_hw.Console.WriteLine("Booted successfully.");
+			_hw.Console.WriteLine();
+			_hw.Console.WriteLine();
 		}
 
 		public void Run()
 		{
-			if (_firstRun)
-			{
-				_firstRun = false;
-				_hw.Console.Clear();
-				return;
-			}
-
-			_hw.Console.Write("Input: ? ");
-			var input = _hw.Console.ReadLine();
-			_hw.Console.Write("Text typed: ");
-			_hw.Console.WriteLine(input);
-
-			if (input == "shutdown")
-			{
-				_hw.Power.Shutdown();
-			}
-			else if (input == "reboot")
-			{
-				_hw.Power.Reboot();
-			}
+			var shell = new Shell();
+			var ctx = new DeviceContext(_hw);
+			var env = new Environment();
+			shell.Execute(ctx, env, new[] { "init" });
 		}
 
 		public void AfterRun()
