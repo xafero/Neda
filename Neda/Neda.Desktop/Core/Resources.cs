@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Neda.Desktop
+namespace Neda.Desktop.Core
 {
 	internal static class Resources
 	{
@@ -8,7 +8,8 @@ namespace Neda.Desktop
 		{
 			var type = typeof(Resources);
 			var dll = type.Assembly;
-			var fullName = type.FullName + path.Replace('/', '.');
+			var name = type.FullName?.Replace('.' + nameof(Core), "");
+			var fullName = name + path.Replace('/', '.');
 			return dll.GetManifestResourceStream(fullName);
 		}
 	}

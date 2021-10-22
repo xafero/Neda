@@ -1,4 +1,4 @@
-namespace Neda.Desktop
+namespace Neda.Desktop.Core
 {
 	internal struct Size
 	{

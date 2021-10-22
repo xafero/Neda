@@ -8,8 +8,9 @@ using Gdk;
 using Gtk;
 using Neda.API;
 using Context = Cairo.Context;
+using Env = System.Environment;
 
-namespace Neda.Desktop
+namespace Neda.Desktop.Core
 {
 	internal class EmuWindow : DrawingArea, IConsole
 	{
@@ -90,7 +91,7 @@ namespace Neda.Desktop
 		}
 
 		public void WriteLine(string text)
-			=> Write(text + Environment.NewLine);
+			=> Write(text + Env.NewLine);
 
 		private static void Refresh(Widget widget)
 			=> Application.Invoke((o, e) => widget.QueueDraw());
@@ -131,7 +132,7 @@ namespace Neda.Desktop
 				g.ShowText(bld.ToString());
 			}
 
-			foreach (var (r, c, s) in _layer)
+			foreach (var (r, c, s) in _layer.ToArray())
 			{
 				g.SetSourceRGB(255, 255, 255);
 				g.MoveTo(xShift, yShift + (ySize * r));
